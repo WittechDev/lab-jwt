@@ -1,41 +1,35 @@
 const express = require("express");
 const userController = require("../controllers/usersController");
+const helper = require("../utils/helper");
 
 const router = express.Router();
 
-const getUsers = async (request, response) => {
+const getUsers = async (request, response, next) => {
   const result = await userController.getUsers();
-  response.status(200).json(result);
+  helper.response({ data: result, next });
 };
 
-const getUserById = async (request, response) => {
+const getUserById = async (request, response, next) => {
   const id = parseInt(request.params.id);
   const result = await userController.getUserById(id);
-  response.status(200).json(result);
+  helper.response({ data: result, next });
 };
 
-const createUser = async (request, response) => {
-  const { name, email } = request.body;
-  const result = await userController.createUser({ name, email });
-  response.status(201).send(`User added with ID: ${result.insertId}`);
-};
-
-const updateUser = async (request, response) => {
+const updateUser = async (request, response, next) => {
   const id = parseInt(request.params.id);
   const { name, email } = request.body;
   await userController.updateUser(id, { name, email });
-  response.status(200).send(`User modified with ID: ${id}`);
+  helper.response({ data: `User modified with ID: ${id}`, next });
 };
 
-const deleteUser = async (request, response) => {
+const deleteUser = async (request, response, next) => {
   const id = parseInt(request.params.id);
   await userController.deleteUser(id);
-  response.status(200).send(`User deleted with ID: ${id}`);
+  helper.response({ data: `User deleted with ID: ${id}`, next });
 };
 
 router.get("/", getUsers);
 router.get("/:id", getUserById);
-router.post("/", createUser);
 router.put("/:id", updateUser);
 router.delete("/:id", deleteUser);
 

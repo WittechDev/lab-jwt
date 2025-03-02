@@ -1,10 +1,12 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const { connectDB } = require("./config/database");
-const logger = require("./middlewares/logger");
 require("dotenv").config();
 
+const { connectDB } = require("./config/database");
 const userRouter = require("./routes/usersRoute");
+const authRouter = require("./routes/authenRoute");
+const responseHandler = require("./middlewares/responseHandler");
+const authentication = require("./middlewares/authentication");
 
 const app = express();
 
@@ -18,13 +20,15 @@ app.use(
   })
 );
 
-app.use(logger);
-
 // Route
 app.get("/", (request, response) => {
   response.json({ info: "Node.js, Express, and Postgres API" });
 });
-app.use("/api/users", userRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/users", authentication, userRouter);
+
+// Response Handler & Logger
+app.use(responseHandler);
 
 // Database Connection
 connectDB();
