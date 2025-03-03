@@ -1,31 +1,32 @@
+const helper = require("../utils/helper");
+const jwt = require("jsonwebtoken");
+
 const getToken = (req) => {
-  const bearer = req.headers.authorization;
-  if (!bearer) {
-    throw { message: "token is required" };
+  if (!req.headers.authorization) {
+    throw { code: 401, message: "token is required" };
   }
 
   const token = req.headers.authorization.split(" ")[1];
   return token;
 };
 
-const verifyToken = async (token) => {
-  // TODO: jwt verify token
-  return;
+const verifyToken = (token) => {
+  try {
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    return decoded;
+  } catch (error) {
+    throw { code: 403, message: "forbidden" };
+  }
 };
 
-const authentication = async (req, res, next) => {
+const authentication = (req, res, next) => {
   try {
     const token = getToken(req);
-    const resp = await verifyToken(token);
+    verifyToken(token);
 
-    if (resp.user) {
-      next();
-    } else {
-      throw new Error();
-    }
-  } catch (e) {
-    console.log("eror:", e.message);
-    res.status(401).send({ message: "unauthorization" });
+    next();
+  } catch (error) {
+    helper.errorResponse({ error, next });
   }
 };
 

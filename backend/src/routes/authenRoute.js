@@ -1,5 +1,5 @@
 const express = require("express");
-const userController = require("../controllers/usersController");
+const authController = require("../controllers/authController");
 const authenValidator = require("../validator/authenValidator");
 const helper = require("../utils/helper");
 
@@ -9,7 +9,7 @@ const login = async (request, response, next) => {
   try {
     const { email, password } = request.body;
 
-    const result = await userController.login({ email, password });
+    const result = await authController.login({ email, password });
     helper.response({ data: result, next });
   } catch (error) {
     helper.errorResponse({ error, next });
@@ -20,7 +20,7 @@ const register = async (request, response, next) => {
   try {
     const { username, email, password } = request.body;
 
-    const result = await userController.register({ username, email, password });
+    const result = await authController.register({ username, email, password });
     helper.response({ data: result, next });
   } catch (error) {
     helper.errorResponse({ error, next });
