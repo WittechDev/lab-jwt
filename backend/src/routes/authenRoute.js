@@ -2,6 +2,10 @@ const express = require("express");
 const authController = require("../controllers/authController");
 const authenValidator = require("../validator/authenValidator");
 const helper = require("../utils/helper");
+const {
+  jwtAccessTokenGenerate,
+  jwtRefreshTokenGenerate,
+} = require("../utils/jwtGenerator");
 
 const router = express.Router();
 
@@ -27,7 +31,24 @@ const register = async (request, response, next) => {
   }
 };
 
+const refresh = async (request, response, next) => {
+  try {
+    const access_token = jwtAccessTokenGenerate(request.user);
+    const refresh_token = jwtRefreshTokenGenerate(request.user);
+    helper.response({
+      data: {
+        access_token,
+        refresh_token,
+      },
+      next,
+    });
+  } catch (error) {
+    helper.errorResponse({ error, next });
+  }
+};
+
 router.post("/login", authenValidator.loginValidator, login);
 router.post("/register", authenValidator.registerValidator, register);
+router.post("/refresh", authenValidator.jwtRefreshTokenValidate, refresh);
 
 module.exports = router;

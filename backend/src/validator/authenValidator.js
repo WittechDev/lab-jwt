@@ -1,3 +1,7 @@
+const jwt = require("jsonwebtoken");
+const { getToken } = require("../middlewares/authentication");
+const helper = require("../utils/helper");
+
 const EMAIL_REGEXP = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const PASSWORD_REGEXP = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*(\W|_)).{5,}$/;
 
@@ -38,4 +42,20 @@ const registerValidator = async (request, response, next) => {
   next();
 };
 
-module.exports = { loginValidator, registerValidator };
+const jwtRefreshTokenValidate = (request, response, next) => {
+  try {
+    const token = getToken(request);
+    const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+    const user = {
+      id: decoded.id,
+      username: decoded.username,
+      email: decoded.email,
+    };
+    request.user = user;
+    next();
+  } catch (error) {
+    helper.errorResponse({ error, next });
+  }
+};
+
+module.exports = { loginValidator, registerValidator, jwtRefreshTokenValidate };
