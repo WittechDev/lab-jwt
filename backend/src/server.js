@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 require("dotenv").config();
 
 const { connectDB } = require("./config/database");
@@ -8,9 +9,10 @@ const authRouter = require("./routes/authenRoute");
 const responseHandler = require("./middlewares/responseHandler");
 const authentication = require("./middlewares/authentication");
 
-const app = express();
-
 const PORT = process.env.PORT || 3000;
+
+const app = express();
+app.use(cors());
 
 // Middleware
 app.use(bodyParser.json());
