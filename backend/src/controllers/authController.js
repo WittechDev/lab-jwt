@@ -1,3 +1,4 @@
+const axios = require("axios");
 const { sequelize } = require("../config/database");
 const Argon2 = require("@node-rs/argon2");
 const {
@@ -66,7 +67,36 @@ const register = async ({ username, email, password }) => {
   return "successful";
 };
 
+const googleAuth = async ({ token }) => {
+  const response = await axios.get(
+    `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${token}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+      },
+    }
+  );
+  const user = response.data;
+  const [results] = await sequelize.query(
+    "SELECT * FROM public.user WHERE email = :email",
+    { replacements: { email: user.email } }
+  );
+  const dbUser = results[0];
+  if (dbUser) {
+    const access_token = jwtAccessTokenGenerate(user);
+    const refresh_token = jwtRefreshTokenGenerate(user);
+    return {
+      access_token,
+      refresh_token,
+    };
+  } else {
+    throw { code: 401, message: "unauthorized" };
+  }
+};
+
 module.exports = {
   login,
   register,
+  googleAuth,
 };

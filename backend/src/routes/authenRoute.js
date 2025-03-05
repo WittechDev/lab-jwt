@@ -6,6 +6,7 @@ const {
   jwtAccessTokenGenerate,
   jwtRefreshTokenGenerate,
 } = require("../utils/jwtGenerator");
+const { getToken } = require("../middlewares/authentication");
 
 const router = express.Router();
 
@@ -47,8 +48,22 @@ const refresh = async (request, response, next) => {
   }
 };
 
+const google = async (request, response, next) => {
+  try {
+    const token = getToken(request);
+    const result = await authController.googleAuth({ token });
+    helper.response({
+      data: result,
+      next,
+    });
+  } catch (error) {
+    helper.errorResponse({ error, next });
+  }
+};
+
 router.post("/login", authenValidator.loginValidator, login);
 router.post("/register", authenValidator.registerValidator, register);
 router.post("/refresh", authenValidator.jwtRefreshTokenValidate, refresh);
+router.get("/callback/google", google);
 
 module.exports = router;

@@ -1,4 +1,4 @@
-import { GoogleLogin } from "@react-oauth/google";
+import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 import React from "react";
 import { useForm } from "react-hook-form";
 
@@ -20,12 +20,27 @@ function Login() {
     }
   };
 
-  const responseMessage = (response) => {
-    console.log(response);
-  };
-  const errorMessage = (error) => {
-    console.log(error);
-  };
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (codeResponse) => {
+      try {
+        const response = await http.get(`/auth/callback/google`, {
+          headers: {
+            Authorization: `Bearer ${codeResponse.access_token}`,
+            Accept: "application/json",
+          },
+        });
+        const { access_token, refresh_token } = response.data;
+        sessionStorage.setItem("accessToken", access_token);
+        sessionStorage.setItem("refreshToken", refresh_token);
+        alert("Hello Welcome, Have code, Have happy.");
+        window.location.href = "/";
+      } catch (error) {
+        alert(error.message);
+        googleLogout();
+      }
+    },
+    onError: (error) => alert(error.message),
+  });
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
@@ -91,7 +106,27 @@ function Login() {
           <div className="flex-grow border-t border-gray-400"></div>
         </div>
         <div className="px-6 sm:px-0 max-w-sm">
-          <GoogleLogin onSuccess={responseMessage} onError={errorMessage} />
+          <button
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition-colors inline-flex items-center justify-center"
+            onClick={googleLogin}
+          >
+            <svg
+              className="mr-2 -ml-1 w-4 h-4"
+              aria-hidden="true"
+              focusable="false"
+              data-prefix="fab"
+              data-icon="google"
+              role="img"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 488 512"
+            >
+              <path
+                fill="currentColor"
+                d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"
+              ></path>
+            </svg>
+            Sign In with Google
+          </button>
         </div>
       </div>
     </div>

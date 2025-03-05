@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 
-import { EMAIL_REGEXP, PASSWORD_REGEXP } from "../constant";
+import { EMAIL_REGEXP } from "../constant";
 import http from "../http";
 
 function Register() {
@@ -66,12 +66,24 @@ function Register() {
               {...register("password", {
                 required: true,
                 validate: (val) => {
-                  if (!PASSWORD_REGEXP.test(val)) {
-                    return "Password is invalid";
+                  if (!/\d/.test(val)) {
+                    return "Password must contain a single digit";
+                  }
+                  if (!/[a-z]/.test(val)) {
+                    return "Password must contain one lowercase letter";
+                  }
+                  if (!/[A-Z]/.test(val)) {
+                    return "Password must contain one uppercase letter";
+                  }
+                  if (!/\W/.test(val)) {
+                    return "Password must contain one special character";
+                  }
+                  if (!/.{8,}/.test(val)) {
+                    return "Password must be 8 characters long or more";
                   }
                 },
               })}
-              type="password"
+              type="text"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
               placeholder="••••••••"
             />
@@ -116,31 +128,6 @@ function Register() {
           >
             Sign in
           </a>
-        </div>
-        <div className="relative flex py-5 items-center">
-          <div className="flex-grow border-t border-gray-400"></div>
-          <span className="flex-shrink mx-4 text-gray-400">or</span>
-          <div className="flex-grow border-t border-gray-400"></div>
-        </div>
-        <div className="px-6 sm:px-0 max-w-sm">
-          <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition-colors inline-flex items-center justify-center">
-            <svg
-              className="mr-2 -ml-1 w-4 h-4"
-              aria-hidden="true"
-              focusable="false"
-              data-prefix="fab"
-              data-icon="google"
-              role="img"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 488 512"
-            >
-              <path
-                fill="currentColor"
-                d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"
-              ></path>
-            </svg>
-            Sign Up with Google
-          </button>
         </div>
       </div>
     </div>

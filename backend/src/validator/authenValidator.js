@@ -3,7 +3,7 @@ const { getToken } = require("../middlewares/authentication");
 const helper = require("../utils/helper");
 
 const EMAIL_REGEXP = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-const PASSWORD_REGEXP = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*(\W|_)).{5,}$/;
+const PASSWORD_REGEXP = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*(\W|_)).{8,}$/;
 
 const loginValidator = async (request, response, next) => {
   const { email, password } = request.body;

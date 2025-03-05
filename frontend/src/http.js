@@ -24,6 +24,8 @@ axiosInstance.interceptors.response.use(
   (response) => response, // Directly return successful responses.
   async (error) => {
     const originalRequest = error.config;
+    if (originalRequest.url === "/auth/callback/google")
+      return Promise.reject(error);
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true; // Mark the request as retried to avoid infinite loops.
       try {
