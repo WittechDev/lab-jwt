@@ -2,8 +2,8 @@ const jwt = require("jsonwebtoken");
 
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
-const ACCESS_EXPIRES = "3m";
-const REFRESH_EXPIRES = "1d";
+const ACCESS_EXPIRES = "1m";
+const REFRESH_EXPIRES = "3m";
 const JWT_ALGO = "HS256";
 
 const jwtAccessTokenGenerate = (user = {}) => {

@@ -15,7 +15,7 @@ const verifyToken = (token) => {
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     return decoded;
   } catch (error) {
-    throw { code: 403, message: "forbidden" };
+    throw { code: 401, message: "unauthorized" };
   }
 };
 
