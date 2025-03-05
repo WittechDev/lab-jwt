@@ -1,10 +1,8 @@
-import axios from "axios";
 import React from "react";
 import { useForm } from "react-hook-form";
 
-const EMAIL_REGEXP = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-const PASSWORD_REGEXP = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*(\W|_)).{5,}$/;
-const API_HOST = import.meta.env.VITE_API_HOST;
+import { EMAIL_REGEXP, PASSWORD_REGEXP } from "../constant";
+import http from "../http";
 
 function Register() {
   const {
@@ -20,7 +18,7 @@ function Register() {
         email: values.email,
         password: values.password,
       };
-      await axios.post(`${API_HOST}/api/auth/register`, body);
+      await http.post(`/auth/register`, body);
       alert("Successfully registered.");
       window.location.href = "/login";
     } catch (error) {

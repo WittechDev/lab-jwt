@@ -1,19 +1,17 @@
-import axios from "axios";
 import React from "react";
 import { useForm } from "react-hook-form";
 
-const EMAIL_REGEXP = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-const API_HOST = import.meta.env.VITE_API_HOST;
+import { EMAIL_REGEXP } from "../constant";
+import http from "../http";
 
 function Login() {
   const { register, handleSubmit } = useForm();
   const onSubmit = async (values) => {
     try {
-      const response = await axios.post(`${API_HOST}/api/auth/login`, values);
-      const accessToken = response.data.access_token;
-      const refreshToken = response.data.refresh_token;
-      window.sessionStorage.setItem("accessToken", accessToken);
-      window.sessionStorage.setItem("refreshToken", refreshToken);
+      const response = await http.post(`/auth/login`, values);
+      const { access_token, refresh_token } = response.data;
+      sessionStorage.setItem("accessToken", access_token);
+      sessionStorage.setItem("refreshToken", refresh_token);
       alert("Hello Welcome, Have code, Have happy.");
       window.location.href = "/";
     } catch (error) {
